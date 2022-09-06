@@ -5,7 +5,7 @@ import itertools
 import gmaps
 import googlemaps
 import matplotlib.pyplot as plt
-from IPython.display import display
+# from IPython.display import display
 
 API_KEY = 'AIzaSyA28cLHKbm5apdM41K2Q7Nn3nXNToRzHSo'
 gmaps.configure(api_key=API_KEY)
