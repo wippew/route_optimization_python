@@ -5,40 +5,50 @@ import itertools
 import gmaps
 import googlemaps
 import matplotlib.pyplot as plt
-# from IPython.display import display
 
 API_KEY = 'AIzaSyA28cLHKbm5apdM41K2Q7Nn3nXNToRzHSo'
 gmaps.configure(api_key=API_KEY)
 googlemaps = googlemaps.Client(key=API_KEY)
 
 # customer count ('0' is depot)
-customer_count = 6
+customer_count = 10
 
 # the number of vehicle
 vehicle_count = 2
 
 # the capacity of vehicle
-vehicle_capacity = 480
+# 5h in seconds
+vehicle_capacity = 9000 * 2
 
 # fix random seed
-np.random.seed(seed=777)
+np.random.seed(seed=456)
 
 # set depot latitude and longitude
-depot_latitude = 40.748817
-depot_longitude = -73.985428
+depot_latitude = 60.18949602985186
+depot_longitude = 24.917047352139903
 
 
 
 # make dataframe which contains maintenance location and demand
-df = pd.DataFrame({"latitude": np.random.normal(depot_latitude, 0.007, customer_count),
-                   "longitude": np.random.normal(depot_longitude, 0.007, customer_count),
-                   "demand": np.random.randint(10, 20, customer_count)})
+df = pd.DataFrame({"latitude": np.random.normal(depot_latitude, 0.1, customer_count),
+                   "longitude": np.random.normal(depot_longitude, 0.1, customer_count),
+                   "demand": 60 * 60})
 
 
 # update depot values to correct places
 df.at[0, "demand"] = 0
 df.at[0, "latitude"] = depot_latitude
 df.at[0, "longitude"] = depot_longitude
+
+#otaniementie loc
+df.latitude[1] = 60.18289513777758
+df.longitude[1] = 24.831880137248284
+#yhtiöntie 2 loc
+df.latitude[2] = 60.2031430359331
+df.longitude[2] = 24.721788777912327
+#alppikatu
+df.latitude[3] = 60.185696847692576
+df.longitude[3] = 24.94451173724837
 
 # function for calculating distance between two pins
 def _duration_calculator(_df):
@@ -59,47 +69,53 @@ def _duration_calculator(_df):
     return _duration_result
 
 
-distance = _duration_calculator(df)
+duration = _duration_calculator(df)
 
 
 # definition of LpProblem instance
-problem = pulp.LpProblem("CVRP", pulp.LpMinimize)
+problem = pulp.LpProblem("VRP", pulp.LpMaximize)
 
 # definition of variables which are 0/1
 x = [[[pulp.LpVariable("x%s_%s,%s" % (i, j, k), cat="Binary") if i != j else None for k in range(vehicle_count)] for
       j in range(customer_count)] for i in range(customer_count)]
 
-# add objective function
-problem += pulp.lpSum(distance[i][j] * x[i][j][k] if i != j else 0
+# add objective function maximize x
+problem += pulp.lpSum(x[i][j][k] if i != j else 0
                       for k in range(vehicle_count)
                       for j in range(customer_count)
                       for i in range(customer_count))
 
 # constraints
 # formula 1
+# only one visit per task location
 for j in range(1, customer_count):
     problem += pulp.lpSum(x[i][j][k] if i != j else 0
                           for i in range(customer_count)
-                          for k in range(vehicle_count)) == 1
+                          for k in range(vehicle_count)) <= 1
 
-    # foluma (3)
+# formula 2
+# depart from depot and return to depot
 for k in range(vehicle_count):
     problem += pulp.lpSum(x[0][j][k] for j in range(1, customer_count)) == 1
     problem += pulp.lpSum(x[i][0][k] for i in range(1, customer_count)) == 1
 
-# foluma (4)
+
+# formula 3
+# number of vehicles in and out of a task's location stays the same
 for k in range(vehicle_count):
     for j in range(customer_count):
         problem += pulp.lpSum(x[i][j][k] if i != j else 0
                               for i in range(customer_count)) - pulp.lpSum(
             x[j][i][k] for i in range(customer_count)) == 0
 
-# foluma (5)
+# formula 4
+# the time-capacity of each vehicle should not exceed the maximum capacity
 for k in range(vehicle_count):
-    problem += pulp.lpSum(df.demand[j] * x[i][j][k] if i != j else 0 for i in range(customer_count) for j in
+    problem += pulp.lpSum((duration[i][j] + df.demand[j]) * x[i][j][k] if i != j else 0 for i in range(customer_count) for j in
                           range(1, customer_count)) <= vehicle_capacity
 
-    # fomula (6)
+# formula 6
+# removal of subtours
 subtours = []
 for i in range(2, customer_count):
     subtours += itertools.combinations(range(1, customer_count), i)
@@ -111,25 +127,32 @@ for s in subtours:
 
 # print vehicle_count which needed for solving problem
 # print calculated minimum distance value
-if problem.solve() == 1:
+solution = problem.solve()
+if solution == 1:
     print('Vehicle Requirements:', vehicle_count)
     print('Moving Distance:', pulp.value(problem.objective))
+
+testing = pulp.LpStatus[solution]
 
 
 # visualization : plotting with matplolib
 plt.figure(figsize=(8, 8))
 for i in range(customer_count):
     if i == 0:
-        plt.scatter(df.latitude[i], df.longitude[i], c='green', s=200)
-        plt.text(df.latitude[i], df.longitude[i], "depot", fontsize=12)
+        plt.scatter(df.longitude[i], df.latitude[i], c='green', s=200)
+        plt.text(df.longitude[i], df.latitude[i], "depot", fontsize=12)
     else:
-        plt.scatter(df.latitude[i], df.longitude[i], c='orange', s=200)
-        plt.text(df.latitude[i], df.longitude[i], str(df.demand[i]), fontsize=12)
+        plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=200)
+        plt.text(df.longitude[i], df.latitude[i], str(df.demand[i] / 60), fontsize=12)
 
+colors = ["red", "blue", "black", "orange", "gray"]
 for k in range(vehicle_count):
     for i in range(customer_count):
         for j in range(customer_count):
             if i != j and pulp.value(x[i][j][k]) == 1:
-                plt.plot([df.latitude[i], df.latitude[j]], [df.longitude[i], df.longitude[j]], c="black")
+                if k == 0:
+                    plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="black")
+                else:
+                    plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="red")
 
 plt.show()
