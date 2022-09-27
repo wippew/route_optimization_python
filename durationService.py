@@ -17,11 +17,15 @@ def duration_calculator(df):
     for i in range(len(df)):
         for j in range(len(df)):
             # calculate distance of all pairs
-            google_maps_api_result = googlemaps.directions(df['latitude-longitude'].iloc[i],
-                                                            df['latitude-longitude'].iloc[j],
-                                                            mode='driving')
+            if duration_result[j][i] == 0:
+                test2 = df['latitude-longitude'].iloc[i]
+                test3 = df['latitude-longitude'].iloc[j]
 
-            duration_result[i][j] = google_maps_api_result[0]['legs'][0]['duration']['value']
+                google_maps_api_result = googlemaps.directions(test2, test3, mode='driving')
+
+                duration_result[i][j] = google_maps_api_result[0]['legs'][0]['duration']['value']
+            else:
+                duration_result[i][j] = duration_result[j][i]
 
     return duration_result
 
