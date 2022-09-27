@@ -1,7 +1,5 @@
 import pulp
-import itertools
 import matplotlib.pyplot as plt
-from durationService import duration_calculator
 
 
 def solveAndDraw(df, duration, customer_count, vehicle_count, vehicle_capacity):
@@ -17,7 +15,6 @@ def solveAndDraw(df, duration, customer_count, vehicle_count, vehicle_capacity):
                           for k in range(vehicle_count)
                           for j in range(customer_count)
                           for i in range(customer_count))
-
     # CONSTRAINTS
     # formula 1
     # only one visit per task location
@@ -61,33 +58,31 @@ def solveAndDraw(df, duration, customer_count, vehicle_count, vehicle_capacity):
         for j in range(customer_count):
             for k in range(vehicle_count):
                 if i != j and (i != 0 and j != 0):
-                    problem += t[j] >= t[i] + 1 - (customer_count/3) * (1-x[i][j][k])
+                    problem += t[j] >= t[i] + 1 - 5 * (1-x[i][j][k])
 
     # first geometric constraint
     for i in range(customer_count):
         for j in range(customer_count):
             for k in range(vehicle_count):
                 if i != j:
-                    problem += duration[i][j] * x[i][j][k] <= (30 * 60)
+                    problem += duration[i][j] * x[i][j][k] <= (4 * 60)
 
     # print vehicle_count which needed for solving problem
     # print calculated minimum distance value
     solution = problem.solve()
     if solution == 1:
         print('Vehicle Requirements:', vehicle_count)
-        print('Moving Time:', pulp.value(problem.objective))
-
-    testing = pulp.LpStatus[solution]
+        print('Nodes visited:', pulp.value(problem.objective))
 
     # visualization : plotting with matplolib
     plt.figure(figsize=(8, 8))
     for i in range(customer_count):
         if i == 0:
-            plt.scatter(df.longitude[i], df.latitude[i], c='green', s=200)
+            plt.scatter(df.longitude[i], df.latitude[i], c='green', s=100)
             plt.text(df.longitude[i], df.latitude[i], "depot", fontsize=12)
         else:
-            plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=200)
-            plt.text(df.longitude[i], df.latitude[i], str(df.demand[i] / 60), fontsize=12)
+            plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=50)
+           # plt.text(df.longitude[i], df.latitude[i], str(df.demand[i] / 60), fontsize=12)
 
     colors = ["red", "blue", "black", "orange", "gray"]
     for k in range(vehicle_count):
@@ -98,6 +93,8 @@ def solveAndDraw(df, duration, customer_count, vehicle_count, vehicle_capacity):
                         plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="black")
                     elif k == 1:
                         plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="red")
+                    elif k == 3:
+                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="gray")
                     else:
                         plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="green")
     plt.show()
