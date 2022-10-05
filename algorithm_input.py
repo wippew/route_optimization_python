@@ -7,9 +7,9 @@ from durationService import duration_calculator
 from solver import solveAndDraw
 
 # customer count ('0' is depot)
-customer_count = 70
+customer_count = 10
 # the number of vehicle
-vehicle_count = 3
+vehicle_count = 1
 # the capacity of vehicle
 # 5h in seconds
 vehicle_capacity = 5 * 3600
@@ -48,6 +48,10 @@ df = pd.DataFrame({"latitude": lol_first,
 df.at[0, "demand"] = 0
 df.at[0, "latitude"] = depot_latitude
 df.at[0, "longitude"] = depot_longitude
+
+df.at[1, "demand"] = 0
+df.at[1, "latitude"] = depot_2_latitude
+df.at[1, "longitude"] = depot_2_longitude
 
 file_name = "test_file_%s.npy" % customer_count
 
