@@ -49,6 +49,17 @@ def solveAndDraw(df, duration, task_count, vehicle_count, vehicle_capacity):
             problem += pulp.lpSum(x[depot_index][j][car] for j in range(depot_count, task_count)) == 1
             problem += pulp.lpSum(x[i][depot_index][car] for i in range(depot_count, task_count)) == 1
 
+    #formula 3
+    for depot_index in range(depot_count):
+        cars = depots[depot_index]
+        for other_depot in range(0, depot_count):
+            if other_depot != depot_index:
+                for k in range(len(cars)):
+                    car = cars[k]
+                    problem += pulp.lpSum(x[other_depot][j][car] for j in range(depot_count, task_count)) == 0
+                    problem += pulp.lpSum(x[i][other_depot][car] for i in range(depot_count, task_count)) == 0
+
+
     # formula 3
     # number of vehicles in and out of a task's location stays the same
     for k in range(vehicle_count):
