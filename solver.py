@@ -69,7 +69,7 @@ def solveAndDraw(df, duration, task_count, vehicle_count, vehicle_capacity):
     for k in range(vehicle_count):
         problem += pulp.lpSum(
             (duration[i][j] + df.demand[j]) * x[i][j][k] if i != j else 0 for i in range(task_count) for j in
-            range(depot_count, task_count)) <= vehicle_capacity
+            range(task_count)) <= vehicle_capacity
 
 
     t = pulp.LpVariable.dicts("t", (i for i in range(task_count)), \
