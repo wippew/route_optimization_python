@@ -9,10 +9,10 @@ from solver import solveAndDraw
 # customer count ('0' is depot)
 customer_count = 10
 # the number of vehicle
-vehicle_count = 1
+# vehicle_count = 2
 # the capacity of vehicle
 # 5h in seconds
-vehicle_capacity = 5 * 3600
+vehicle_capacity = 3 * 3600
 # fix random seed
 np.random.seed(seed=456)
 # set depot latitude and longitude
@@ -25,23 +25,23 @@ depot_2_longitude = 24.917047352139903
 # make dataframe which contains maintenance location and demand
 quarter_customer_count = int(customer_count/2)
 
-#lat
-lol1 = np.random.normal(depot_latitude, 0.005, quarter_customer_count)
-#long
-lol2 = np.random.normal(depot_longitude, 0.02, quarter_customer_count)
+# #lat
+# lol1 = np.random.normal(depot_latitude, 0.005, quarter_customer_count)
+# #long
+# lol2 = np.random.normal(depot_longitude, 0.02, quarter_customer_count)
+#
+# #lat
+# lol3 = np.random.normal(depot_2_latitude, 0.005, quarter_customer_count)
+# #long
+# lol4 = np.random.normal(depot_2_longitude, 0.01, quarter_customer_count)
+#
+#
+# lol_first = np.concatenate((lol1, lol3))
+# lol_second = np.concatenate((lol2, lol4))
 
-#lat
-lol3 = np.random.normal(depot_2_latitude, 0.005, quarter_customer_count)
-#long
-lol4 = np.random.normal(depot_2_longitude, 0.01, quarter_customer_count)
 
-
-lol_first = np.concatenate((lol1, lol3))
-lol_second = np.concatenate((lol2, lol4))
-
-
-df = pd.DataFrame({"latitude": lol_first,
-                   "longitude": lol_second,
+df = pd.DataFrame({"latitude": np.random.normal(depot_latitude, 0.005, customer_count),
+                   "longitude": np.random.normal(depot_longitude, 0.02, customer_count),
                    "demand": 60 * 60})
 
 # update depot values to correct places
@@ -63,7 +63,7 @@ if fetch_new == 1:
 else:
     duration = loadDistanceMatrixFromFile(file_name)
     average2 = Utils.AverageWithoutZeros(duration)
-    solveAndDraw(df, duration, customer_count, vehicle_count, vehicle_capacity)
+    solveAndDraw(df, duration, customer_count, 555, vehicle_capacity)
 
 
 
