@@ -11,14 +11,25 @@ def loadDistanceMatrixFromFile(filename):
     return test
 
 
-def Average(lst):
+def average(lst):
     return sum(lst) / len(lst)
 
-def AverageWithoutZeros(lst):
+def averageWithoutZeros(lst):
     cell_total = list()
     for i in range(len(lst)):
         for j in range(len(lst[0])):
             if i != j:
                 cell_total.append(lst[i][j])
 
-    return Average(cell_total)
+    return average(cell_total)
+
+# def addNewDepots(depots, count):
+#     for i in range(0, count):
+#         depots.append([])
+#
+#
+# def addVehicleToDepot(depots, depot, vehicle):
+#     if depots[depot]:
+#         depots[depot].append(vehicle)
+#     else:
+#         addNewDepot(depots)

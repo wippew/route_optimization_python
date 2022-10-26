@@ -2,17 +2,17 @@ import numpy as np
 import pandas as pd
 
 import Utils
-from Utils import saveDistanceMatrixToFile, loadDistanceMatrixFromFile
-from durationService import duration_calculator
-from solver import solveAndDraw
 
-# customer count ('0' is depot)
-customer_count = 10
+from Utils import saveDistanceMatrixToFile, loadDistanceMatrixFromFile
+from DurationService import duration_calculator
+from Solver import solveAndDraw
+
+customer_count = 16
 # the number of vehicle
 # vehicle_count = 2
 # the capacity of vehicle
 # 5h in seconds
-vehicle_capacity = 3 * 3600
+vehicle_capacity = 4 * 3600
 # fix random seed
 np.random.seed(seed=456)
 # set depot latitude and longitude
@@ -21,6 +21,7 @@ depot_longitude = 24.831880137248284
 
 depot_2_latitude = 60.18949602985186
 depot_2_longitude = 24.917047352139903
+
 
 # make dataframe which contains maintenance location and demand
 quarter_customer_count = int(customer_count/2)
@@ -62,8 +63,8 @@ if fetch_new == 1:
     save = saveDistanceMatrixToFile(file_name, duration)
 else:
     duration = loadDistanceMatrixFromFile(file_name)
-    average2 = Utils.AverageWithoutZeros(duration)
-    solveAndDraw(df, duration, customer_count, 555, vehicle_capacity)
+    average2 = Utils.averageWithoutZeros(duration)
+    solveAndDraw(df, duration, customer_count, vehicle_capacity)
 
 
 

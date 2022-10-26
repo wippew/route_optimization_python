@@ -4,11 +4,14 @@ import pulp
 import matplotlib.pyplot as plt
 
 
-def solveAndDraw(df, duration, task_count, vehicle_count, vehicle_capacity):
+def solveAndDraw(df, duration, task_count, vehicle_capacity):
 
-    depots = [[0], [1]]
+    depots = [[0, 1], [2]]
     depot_count = len(depots)
-    vehicle_count = 2
+    vehicle_count = 0
+    for i in range(depot_count):
+        vehicle_count += len(depots[i])
+
 
     # definition of LpProblem instance
     problem = pulp.LpProblem("VRP", pulp.LpMaximize)
@@ -82,29 +85,12 @@ def solveAndDraw(df, duration, task_count, vehicle_count, vehicle_capacity):
                 if i != j:
                     problem += t[j] >= t[i] + 1 - 5 * (1-x[i][j][k])
 
-    #Old eliminate subtour
-    # subtours = []
-    # for i in range(2, task_count):
-    #     subtours += itertools.combinations(range(1, task_count), i)
-    #
-    # for s in subtours:
-    #     problem += pulp.lpSum(
-    #         x[i][j][k] if i != j else 0 for i, j in itertools.permutations(s, 2) for k in range(vehicle_count)) <= len(s) - 1
-
-    # formula 6
-    # no inter depot tour
-    # for k in range(vehicle_count):
-    #     for i in range(0, depot_count):
-    #         for j in range(0, depot_count):
-    #             if i != j:
-    #                 problem += x[i][j][k] == 0
-
     # first geometric constraint
-    # for i in range(task_count):
-    #     for j in range(task_count):
-    #         for k in range(vehicle_count):
-    #             if i != j:
-    #                 problem += duration[i][j] * x[i][j][k] <= (4 * 60)
+    for i in range(task_count):
+        for j in range(task_count):
+            for k in range(vehicle_count):
+                if i != j:
+                    problem += duration[i][j] * x[i][j][k] <= (20 * 60)
 
     # print vehicle_count which needed for solving problem
     # print calculated minimum distance value
@@ -115,20 +101,20 @@ def solveAndDraw(df, duration, task_count, vehicle_count, vehicle_capacity):
 
     # visualization : plotting with matplolib
     plt.figure(figsize=(8, 8))
-    for i in range(task_count):
-        if i == 0:
-            plt.scatter(df.longitude[i], df.latitude[i], c='green', s=100)
-            plt.text(df.longitude[i], df.latitude[i], "depot" + str(i), fontsize=12)
-        elif i == 1:
-            plt.scatter(df.longitude[i], df.latitude[i], c='red', s=100)
-            plt.text(df.longitude[i], df.latitude[i], "depot_2"+ str(i), fontsize=12)
-        else:
-            plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=50)
-            plt.text(df.longitude[i], df.latitude[i], str(i), fontsize=12)
+    for i in range(depot_count):
+        plt.scatter(df.longitude[i], df.latitude[i], c='green', s=100)
+        plt.text(df.longitude[i], df.latitude[i], "depot_" + str(i), fontsize=12)
+
+
+    for i in range(depot_count, task_count):
+        plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=50)
+        plt.text(df.longitude[i], df.latitude[i], str(i), fontsize=12)
 
     colors = ["red", "blue", "black", "orange", "gray"]
     k0 = []
     k1 = []
+    k2 = []
+    k3 = []
     for k in range(vehicle_count):
         for i in range(task_count):
             for j in range(task_count):
@@ -141,10 +127,16 @@ def solveAndDraw(df, duration, task_count, vehicle_count, vehicle_capacity):
                         k1.append("%s_%s" % (i, j))
                     elif k == 2:
                         plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="gray")
+                        k2.append("%s_%s" % (i, j))
+                    elif k == 3:
+                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="blue")
+                        k3.append("%s_%s" % (i, j))
                     else:
-                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="green")
+                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="black")
 
     print("the array is: ", k0)
     print("the array is: ", k1)
+    print("the array is: ", k2)
+    print("the array is: ", k3)
     plt.show()
 
