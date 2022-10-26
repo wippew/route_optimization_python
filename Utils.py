@@ -33,3 +33,24 @@ def averageWithoutZeros(lst):
 #         depots[depot].append(vehicle)
 #     else:
 #         addNewDepot(depots)
+
+def latlon_to_xy(lat, lon, src='epsg:4326'):
+    import pyproj
+    # in:  lat,lon as numpy arrays (dd.dddd, WGS84 default)
+    # out: x,y as numpy arrays (ETRS-TM35FIN)
+
+    proj_latlon = pyproj.Proj(init=src)  # default: WGS84
+    proj_etrs = pyproj.Proj(init='epsg:3067')  # ETRS-TM35FIN
+
+    return pyproj.transform(proj_latlon, proj_etrs, lon, lat)
+
+def xy_to_latlon(x, y, src='epsg:4326'):
+    # in:  x,y as numpy arrays (ETRS-TM35FIN)
+    # out: lat,lon as numpy arrays (dd.ddd, WGS84 default)
+    #      (might also be lon,lat...)
+    import pyproj
+
+    proj_latlon = pyproj.Proj(init=src) # default: WGS84
+    proj_etrs = pyproj.Proj(init='epsg:3067') # ETRS-TM35FIN
+
+    return pyproj.transform(proj_etrs, proj_latlon, x, y)

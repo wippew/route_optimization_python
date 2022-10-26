@@ -4,13 +4,9 @@ import pulp
 import matplotlib.pyplot as plt
 
 
-def solveAndDraw(df, duration, task_count, vehicle_capacity):
+def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count, vehicle_count):
 
-    depots = [[0, 1], [2]]
-    depot_count = len(depots)
-    vehicle_count = 0
-    for i in range(depot_count):
-        vehicle_count += len(depots[i])
+
 
 
     # definition of LpProblem instance
@@ -85,12 +81,12 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity):
                 if i != j:
                     problem += t[j] >= t[i] + 1 - 5 * (1-x[i][j][k])
 
-    # first geometric constraint
-    for i in range(task_count):
-        for j in range(task_count):
-            for k in range(vehicle_count):
-                if i != j:
-                    problem += duration[i][j] * x[i][j][k] <= (20 * 60)
+    # # first geometric constraint
+    # for i in range(task_count):
+    #     for j in range(task_count):
+    #         for k in range(vehicle_count):
+    #             if i != j:
+    #                 problem += duration[i][j] * x[i][j][k] <= (20 * 60)
 
     # print vehicle_count which needed for solving problem
     # print calculated minimum distance value
