@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import xlrd
 
@@ -56,13 +57,24 @@ def get_demand_from_types(tasks_types):
 
     return array
 
+def mock_node_coordinates(task_count):
+    np.random.seed(seed=456)
+    depot_1_latitude = 60.885438
+    depot_1_longitude = 23.252894
+    # lat
+    x_coords = np.random.normal(depot_1_latitude, 0.005, task_count)
+    # long
+    y_coords = np.random.normal(depot_1_longitude, 0.02, task_count)
+    x_coords = np.concatenate(([depot_1_latitude], x_coords))
+    y_coords = np.concatenate(([depot_1_longitude], y_coords))
+    return x_coords, y_coords
+
 def create_node_coordinates(task_count):
     # set depot latitude and longitude
-    depot_1_latitude = 60.2031430359331
-    depot_1_longitude = 24.831880137248284
+    depot_1_latitude =  60.885438
+    depot_1_longitude = 23.252894
 
-    depot_2_latitude = 60.18949602985186
-    depot_2_longitude = 24.917047352139903
+
 
     tasks_x = get_x_coordinates_from_file()
     tasks_y = get_y_coordinates_from_file()
@@ -76,9 +88,14 @@ def create_node_coordinates(task_count):
     x_coords = tasks_xy[1][0:task_count]
     # add depot as first
     x_coords.insert(0, depot_1_latitude)
-    x_coords.insert(1, depot_2_latitude)
+
     y_coords = tasks_xy[0][0:task_count]
     y_coords.insert(0, depot_1_longitude)
-    y_coords.insert(1, depot_2_longitude)
+
+
+    # depot_2_latitude = 60.18949602985186
+    # depot_2_longitude = 24.917047352139903
+    # x_coords.insert(1, depot_2_latitude)
+    # y_coords.insert(1, depot_2_longitude)
 
     return (x_coords, y_coords, tasks_demand)

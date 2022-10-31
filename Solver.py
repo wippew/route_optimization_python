@@ -1,5 +1,3 @@
-import itertools
-
 import pulp
 import matplotlib.pyplot as plt
 
@@ -71,7 +69,7 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count
             range(task_count)) <= vehicle_capacity
 
 
-    t = pulp.LpVariable.dicts("t", (i for i in range(task_count)), \
+    t = pulp.LpVariable.dicts("t", (i for i in range(depot_count, task_count)), \
                               lowBound=1, upBound= task_count, cat='Continuous')
     # formula 5
     #eliminate subtour
@@ -79,7 +77,7 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count
         for j in range(depot_count, task_count):
             for k in range(vehicle_count):
                 if i != j:
-                    problem += t[j] >= t[i] + 1 - 5 * (1-x[i][j][k])
+                    problem += t[j] >= t[i] + 1 - 7 * (1-x[i][j][k])
 
     # # first geometric constraint
     # for i in range(task_count):
@@ -134,5 +132,9 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count
     print("the array is: ", k1)
     print("the array is: ", k2)
     print("the array is: ", k3)
+
+    for i in range(1, task_count):
+        test = t.get(i)
+        asd = 'go chicken'
     plt.show()
 
