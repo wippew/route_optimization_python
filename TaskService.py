@@ -71,7 +71,7 @@ def mock_node_coordinates(task_count):
 
 def create_node_coordinates(task_count):
     # set depot latitude and longitude
-    depot_1_latitude =  60.885438
+    depot_1_latitude = 60.875438
     depot_1_longitude = 23.252894
 
 
@@ -83,6 +83,8 @@ def create_node_coordinates(task_count):
     tasks_demand = tasks_demand[0:task_count]
     tasks_demand.insert(0, 0)
     tasks_demand.insert(1, 0)
+
+    tasks_types = get_types_from_file()
 
     tasks_xy = xy_to_latlon(tasks_x, tasks_y)
     x_coords = tasks_xy[1][0:task_count]
@@ -98,4 +100,4 @@ def create_node_coordinates(task_count):
     # x_coords.insert(1, depot_2_latitude)
     # y_coords.insert(1, depot_2_longitude)
 
-    return (x_coords, y_coords, tasks_demand)
+    return (x_coords, y_coords, tasks_demand, tasks_types)

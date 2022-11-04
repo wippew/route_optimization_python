@@ -2,11 +2,7 @@ import pulp
 import matplotlib.pyplot as plt
 
 
-def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count, vehicle_count):
-
-
-
-
+def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count, vehicle_count, types):
     # definition of LpProblem instance
     problem = pulp.LpProblem("VRP", pulp.LpMaximize)
 
@@ -101,8 +97,8 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count
 
 
     for i in range(depot_count, task_count):
-        plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=50)
-        plt.text(df.longitude[i], df.latitude[i], str(i), fontsize=12)
+        plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=25)
+        plt.text(df.longitude[i], df.latitude[i], types[i], fontsize=6)
 
     colors = ["red", "blue", "black", "orange", "gray"]
     k0 = []
