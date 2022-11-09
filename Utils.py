@@ -78,10 +78,29 @@ def get_color_by_type(type):
         return 'white'
 
 
-def order_correctly(k0):
-    # get first one first
-    for i in k0:
-        split = i.split(",")
-        test = "asd"
+def replace_with_arrows(ret):
+    new_ret = []
+    for i in ret:
+        new_ret.append(i.replace('_', '->'))
+    return new_ret
 
-    omfg = "asd"
+def order_correctly(array):
+    ret = []
+    last_end = '0'
+
+    for i in range(len(array)):
+        next, new_last_end = get_next_in_order(array, last_end)
+        last_end = new_last_end
+        ret.append(next)
+
+    ret = replace_with_arrows(ret)
+
+    return ret
+
+def get_next_in_order(array, last_end):
+    for i in array:
+        split = i.split("_")
+        if split[0] == last_end:
+            last_end = split[1]
+            return i, last_end
+

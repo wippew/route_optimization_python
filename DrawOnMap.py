@@ -12,7 +12,7 @@ def draw_on_map(df, depot_count, task_count, vehicle_count, x, types, t):
 
     for i in range(depot_count, task_count):
         plt.scatter(df.longitude[i], df.latitude[i], c=get_color_by_type(types[i]), s=10)
-        plt.text(df.longitude[i], df.latitude[i], str(i) + types[i], fontsize=6)
+        plt.text(df.longitude[i], df.latitude[i], str(i) + " - " + types[i], fontsize=6)
 
     k0 = []
     k1 = []
@@ -37,14 +37,9 @@ def draw_on_map(df, depot_count, task_count, vehicle_count, x, types, t):
                     else:
                         plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="black")
 
-    # print("the array is: ", order_correctly(k0))
-    # print("the array is: ", order_correctly(k1))
-    # print("the array is: ", order_correctly(k2))
-    # print("the array is: ", order_correctly(k3))
-
-    print("the array is: ", k0)
-    print("the array is: ", k1)
-    print("the array is: ", k2)
-    print("the array is: ", k3)
+    print("the array is: ", order_correctly(k0))
+    print("the array is: ", order_correctly(k1))
+    print("the array is: ", order_correctly(k2))
+    print("the array is: ", order_correctly(k3))
 
     plt.show()
