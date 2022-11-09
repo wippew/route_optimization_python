@@ -1,5 +1,6 @@
 import pulp
-import matplotlib.pyplot as plt
+
+from DrawOnMap import draw_on_map
 
 
 def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count, vehicle_count, types):
@@ -76,11 +77,11 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count
                     problem += t[j] >= t[i] + 1 - 7 * (1-x[i][j][k])
 
     # # first geometric constraint
-    # for i in range(task_count):
-    #     for j in range(task_count):
-    #         for k in range(vehicle_count):
-    #             if i != j:
-    #                 problem += duration[i][j] * x[i][j][k] <= (20 * 60)
+    for i in range(task_count):
+        for j in range(task_count):
+            for k in range(vehicle_count):
+                if i != j:
+                    problem += duration[i][j] * x[i][j][k] <= (45 * 60)
 
     # print vehicle_count which needed for solving problem
     # print calculated minimum distance value
@@ -89,48 +90,4 @@ def solveAndDraw(df, duration, task_count, vehicle_capacity, depots, depot_count
         print('Vehicle Requirements:', vehicle_count)
         print('Nodes visited:', pulp.value(problem.objective))
 
-    # visualization : plotting with matplolib
-    plt.figure(figsize=(8, 8))
-    for i in range(depot_count):
-        plt.scatter(df.longitude[i], df.latitude[i], c='green', s=100)
-        plt.text(df.longitude[i], df.latitude[i], "depot_" + str(i), fontsize=12)
-
-
-    for i in range(depot_count, task_count):
-        plt.scatter(df.longitude[i], df.latitude[i], c='orange', s=25)
-        plt.text(df.longitude[i], df.latitude[i], types[i], fontsize=6)
-
-    colors = ["red", "blue", "black", "orange", "gray"]
-    k0 = []
-    k1 = []
-    k2 = []
-    k3 = []
-    for k in range(vehicle_count):
-        for i in range(task_count):
-            for j in range(task_count):
-                if i != j and pulp.value(x[i][j][k]) == 1:
-                    if k == 0:
-                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="green")
-                        k0.append("%s_%s" % (i, j))
-                    elif k == 1:
-                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="red")
-                        k1.append("%s_%s" % (i, j))
-                    elif k == 2:
-                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="gray")
-                        k2.append("%s_%s" % (i, j))
-                    elif k == 3:
-                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="blue")
-                        k3.append("%s_%s" % (i, j))
-                    else:
-                        plt.plot([df.longitude[i], df.longitude[j]], [df.latitude[i], df.latitude[j]], c="black")
-
-    print("the array is: ", k0)
-    print("the array is: ", k1)
-    print("the array is: ", k2)
-    print("the array is: ", k3)
-
-    for i in range(1, task_count):
-        test = t.get(i)
-        asd = 'go chicken'
-    plt.show()
-
+    draw_on_map(df, depot_count, task_count, vehicle_count, x, types, t)

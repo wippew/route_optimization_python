@@ -2,6 +2,8 @@ import numpy as np
 import googlemaps
 import gmaps
 import googlemaps
+# importing the requests library
+import requests
 
 API_KEY = 'AIzaSyAUt4YSLzcTzqzujW20pA21ndsI1yeZOAY'
 gmaps.configure(api_key=API_KEY)
@@ -30,27 +32,36 @@ def duration_calculator(df):
     return duration_result
 
 
-# importing the requests library
-import requests
 
 
-def get_here_locations():
+def get_travel_times_as_matrix(df):
+    duration_result = np.zeros((len(df), len(df)))
+    df['latitude-longitude'] = '0'
+    for i in range(len(df)):
+        df['latitude-longitude'].iloc[i] = str(df.latitude[i]) + ',' + str(df.longitude[i])
+
+    for i in range(len(df)):
+        for j in range(len(df)):
+            # calculate distance of all pairs
+            if duration_result[j][i] == 0:
+                test = duration_result[j][i]
+                waypoint0 = df['latitude-longitude'].iloc[i]
+                waypoint1 = df['latitude-longitude'].iloc[j]
+                duration_result[i][j] = get_one_here_location(waypoint0, waypoint1)
+            else:
+                duration_result[i][j] = duration_result[j][i]
+
+    return duration_result
+
+
+def get_one_here_location(waypoint0, waypoint1):
     # api-endpoint
     URL = "https://route.api.here.com/routing/7.2/calculateroute.json"
-#     asd = "https://route.api.here.com/routing/7.2/calculateroute.json?&mode=fastest%3Bcar%3Btraffic%3Aenabled&&app_id=CWt4Io2jWFGGLV9csUeX&app_code=ow1GDLeuAgI2yoDwidUKFw
-#
-    'https://route.api.here.com/routing/7.2/calculateroute.json?waypoint0=60.1894%252C24.9170&waypoint1=60.1828%252C24.8318&mode=fastest%253Bcar%253Btraffic%253Aenabled%26&app_id=CWt4Io2jWFGGLV9csUeX&app_code=ow1GDLeuAgI2yoDwidUKFw'
-    # location given here
-    w0_long = "60.1894"
-    w0_lat = "24.9170"
-
-    w1_long = "60.1828"
-    w1_lat = "24.8318"
 
     # defining a params dict for the parameters to be sent to the API
     PARAMS = {}
-    PARAMS["waypoint0"] = w0_long + "," + w0_lat
-    PARAMS["waypoint1"] = w1_long + "," + w1_lat
+    PARAMS["waypoint0"] = waypoint0
+    PARAMS["waypoint1"] = waypoint1
     PARAMS["mode"] = "fastest;car;traffic:disabled"
     PARAMS["app_id"] = "CWt4Io2jWFGGLV9csUeX"
     PARAMS["app_code"] = "ow1GDLeuAgI2yoDwidUKFw"
@@ -61,14 +72,9 @@ def get_here_locations():
     # extracting data in json format
     data = r.json()
 
-    # extracting latitude, longitude and formatted address
-    # of the first matching location
-    # latitude = data['results'][0]['geometry']['location']['lat']
-    # longitude = data['results'][0]['geometry']['location']['lng']
-    # formatted_address = data['results'][0]['formatted_address']
+    # get travel_time from data
+    travel_time = data['response']['route'][0]['leg'][0]['travelTime']
 
-    # printing the output
-    print("Latitude:%s\nLongitude:%s\nFormatted Address:%s"
-          % (latitude, longitude, formatted_address))
+    return travel_time
 
 
