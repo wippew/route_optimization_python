@@ -13,10 +13,7 @@ vehicle_count = 0
 for i in range(depot_count):
     vehicle_count += len(depots[i])
 
-
-
-
-task_count = 20
+task_count = 4
 total_count = depot_count + task_count
 
 vehicle_capacity = 6 * 3600
@@ -30,7 +27,7 @@ df = pd.DataFrame({"latitude": x_coords,
 
 file_name = "test_file_%s.npy" % total_count
 
-fetch_new =0
+fetch_new =1
 
 
 if fetch_new == 1:

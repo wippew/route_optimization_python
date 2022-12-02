@@ -74,8 +74,6 @@ def create_node_coordinates(task_count):
     depot_1_latitude = 60.875438
     depot_1_longitude = 23.252894
 
-
-
     tasks_x = get_x_coordinates_from_file()
     tasks_y = get_y_coordinates_from_file()
     tasks_types = get_types_from_file()
