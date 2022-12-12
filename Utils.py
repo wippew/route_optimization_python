@@ -4,8 +4,6 @@ import numpy as np
 # save duration service to file for development purposes only
 def saveDistanceMatrixToFile(filename ,distanceMatrix):
     np.save(filename, distanceMatrix)
-
-
 def loadDistanceMatrixFromFile(filename):
     test = np.load(filename)
     return test
