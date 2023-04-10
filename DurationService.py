@@ -5,7 +5,6 @@ import googlemaps
 # importing the requests library
 import requests
 
-API_KEY = ''
 gmaps.configure(api_key=API_KEY)
 googlemaps = googlemaps.Client(key=API_KEY)
 
@@ -63,8 +62,8 @@ def get_one_here_location(waypoint0, waypoint1):
     PARAMS["waypoint0"] = waypoint0
     PARAMS["waypoint1"] = waypoint1
     PARAMS["mode"] = "fastest;car;traffic:disabled"
-    PARAMS["app_id"] = "CWt4Io2jWFGGLV9csUeX"
-    PARAMS["app_code"] = "ow1GDLeuAgI2yoDwidUKFw"
+    PARAMS["app_id"] = ""
+    PARAMS["app_code"] = ""
 
     # sending get request and saving the response as response object
     r = requests.get(url=URL, params=PARAMS)
