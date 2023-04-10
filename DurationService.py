@@ -5,7 +5,7 @@ import googlemaps
 # importing the requests library
 import requests
 
-API_KEY = 'AIzaSyAUt4YSLzcTzqzujW20pA21ndsI1yeZOAY'
+API_KEY = ''
 gmaps.configure(api_key=API_KEY)
 googlemaps = googlemaps.Client(key=API_KEY)
 
